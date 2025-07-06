@@ -1,22 +1,25 @@
 import json
+import boto3
+
+s3 = boto3.client('s3')
+BUCKET_NAME = 'mytribal-ai-chatbot'
+LESSONS = ['lesson1.pdf', 'lesson2.pdf', ...]
 
 def lambda_handler(event, context):
     intent = event['currentIntent']['name']
-    slots = event['currentIntent']['slots']
-    
-    if intent == 'OrderStatus':
-        order_id = slots.get('OrderID')
-        response = f"Checking status for order {order_id}..."
-        # Add DynamoDB query for order status
-    elif intent == 'ProductRecommendation':
-        product = slots.get('ProductType')
-        response = f"Recommending {product} based on trends..."
-        # Add logic for recommendations
-    elif intent == 'ConsultingInquiry':
-        response = "Thanks for your interest! Visit mytribal.ai to book a consultation."
+    if intent == 'GetLesson':
+        day = int(event['currentIntent']['slots']['Day'])
+        if 1 <= day <= 7:
+            s3_response = s3.generate_presigned_url(
+                'get_object',
+                Params={'Bucket': BUCKET_NAME, 'Key': f'micro-campaigns/lesson{day}.pdf'},
+                ExpiresIn=3600
+            )
+            response = f"Here's Lesson {day}: {s3_response}"
+        else:
+            response = "Invalid day. Please enter 1-7."
     else:
         response = "How can I assist you today?"
-    
     return {
         'sessionAttributes': {},
         'dialogAction': {
