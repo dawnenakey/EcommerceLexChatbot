@@ -1,28 +1,26 @@
-import Amplify, { Interactions } from 'aws-amplify';
-import awsconfig from './aws-exports';
-import { useState } from 'react';
-import { View, TextInput, Button, Text } from 'react-native';
-
-Amplify.configure(awsconfig);
+import { useState, useEffect } from 'react';
+import { View, Text, Button } from 'react-native';
+import { Auth, API } from 'aws-amplify';
 
 export default function App() {
-  const [message, setMessage] = useState('');
-  const [response, setResponse] = useState('');
+  const [lesson, setLesson] = useState('');
 
-  const sendMessage = async () => {
-    const lexResponse = await Interactions.send('ECommerceBot', message);
-    setResponse(lexResponse.message);
+  useEffect(() => {
+    fetchLesson();
+  }, []);
+
+  const fetchLesson = async () => {
+    const user = await Auth.currentAuthenticatedUser();
+    const response = await API.get('api', '/lesson', {
+      headers: { Authorization: user.signInUserSession.idToken.jwtToken }
+    });
+    setLesson(response.url);
   };
 
   return (
     <View>
-      <TextInput
-        value={message}
-        onChangeText={setMessage}
-        placeholder="Type your message"
-      />
-      <Button title="Send" onPress={sendMessage} />
-      <Text>{response}</Text>
+      <Text>Lesson: {lesson || 'Loading...'}</Text>
+      <Button title="Refresh" onPress={fetchLesson} />
     </View>
   );
 }
