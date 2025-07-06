@@ -1,0 +1,53 @@
+{
+  "name": "ECommerceBot",
+  "locale": "en-US",
+  "intents": [
+    {
+      "name": "OrderStatus",
+      "slots": [
+        {
+          "name": "OrderID",
+          "slotType": "AMAZON.NUMBER",
+          "slotConstraint": "Required"
+        }
+      ],
+      "fulfillmentActivity": {
+        "type": "CodeHook",
+        "codeHook": {
+          "uri": "arn:aws:lambda:YOUR_REGION:YOUR_ACCOUNT_ID:function:YOUR_LAMBDA_FUNCTION",
+          "messageVersion": "1.0"
+        }
+      }
+    },
+    {
+      "name": "ProductRecommendation",
+      "slots": [
+        {
+          "name": "ProductType",
+          "slotType": "AMAZON.Product",
+          "slotConstraint": "Required"
+        }
+      ],
+      "fulfillmentActivity": {
+        "type": "CodeHook",
+        "codeHook": {
+          "uri": "arn:aws:lambda:YOUR_REGION:YOUR_ACCOUNT_ID:function:YOUR_LAMBDA_FUNCTION",
+          "messageVersion": "1.0"
+        }
+      }
+    },
+    {
+      "name": "ConsultingInquiry",
+      "slots": [],
+      "fulfillmentActivity": {
+        "type": "CodeHook",
+        "codeHook": {
+          "uri": "arn:aws:lambda:YOUR_REGION:YOUR_ACCOUNT_ID:function:YOUR_LAMBDA_FUNCTION",
+          "messageVersion": "1.0"
+        }
+      }
+    }
+  ],
+  "voiceId": "Joanna",
+  "childDirected": false
+}
